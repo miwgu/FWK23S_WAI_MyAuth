@@ -14,7 +14,6 @@ function createUser (){
 
 }
 
-console.log(generateCsrfToken())
 /**
  * Users and Validation
  */

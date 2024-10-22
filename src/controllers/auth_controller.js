@@ -33,22 +33,16 @@ const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEm
         sameSite: SAME_SITE
     });
 
+    // Save CSRF token in a non-HTTP-only cookie
+    res.cookie('csrfToken', csrfToken, {
+        httpOnly: false, // Allows client-side JavaScript to access it
+        secure: SECURE,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        sameSite: SAME_SITE
+    });
     res.json({ csrfToken });
 }
 
-// Middleware to validate CSRF token
-exports.validateCSRFToken = (req, res, next) => {
-    const csrfTokenFromRequest = req.body.csrfToken; // Token from the frontend
-    const csrfTokenFromServer = req.session.csrfToken; // Token stored on the server (session, DB, etc.)
-
-    // Compare tokens
-    if (csrfTokenFromRequest !== csrfTokenFromServer) {
-        return res.status(403).json({ error: 'Invalid CSRF token' });
-    }
-
-    // If valid, proceed
-    next();
-}
 
 exports.register = (req, res) => {
     const user = req.body;
