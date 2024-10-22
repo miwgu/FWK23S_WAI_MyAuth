@@ -9,6 +9,10 @@ function generateCsrfToken() {
     return crypto.randomBytes(32).toString('hex');  // Generate a random 32-byte token
 }
 
+function createUser (){
+
+}
+
 console.log(generateCsrfToken())
 /**
  * Users and Validation
@@ -51,4 +55,4 @@ function generateRefreshToken(user) {
 
 
 
-module.exports = { findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken };
+module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken };

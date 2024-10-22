@@ -1,19 +1,97 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
-const{isValidUser, generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
-//const jwt = require('jsonwebtoken');
-//require('dotenv').config(); 
+const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
 
-/* function findUserByEmail(email) {
-    const users = [
-        { email: "admin@example.com", password: "1234", role: "admin" },
-        { email: "user1@example.com", password: "2345", role: "user" }
-    ];
-    return users.find(user => user.email === email);
+   exports.csrfLogin = (req, res) =>{
+    const { email, password} = req.body;
+
+    // Verify the user's credentials (this is just an example)
+    const user = findUserByEmail(email);
+    if (!user || user.password !== password) {
+      return res.status(401).send('Invalid credentials');
+    }
+
+ 
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    const csrfToken = generateCsrfToken();
+    //req.session.csrfToken = csrfToken;// save csrf token
+    console.log("CSRF/token", csrfToken)
+
+    res.cookie('accessToken', accessToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 15 * 60 * 1000,
+        sameSite: SAME_SITE
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/refresh',
+        sameSite: SAME_SITE
+    });
+
+    res.json({ csrfToken });
 }
- */
 
-exports.bearerLogin = (req, res) => {
-    const { email, password } = req.body;
+// Middleware to validate CSRF token
+exports.validateCSRFToken = (req, res, next) => {
+    const csrfTokenFromRequest = req.body.csrfToken; // Token from the frontend
+    const csrfTokenFromServer = req.session.csrfToken; // Token stored on the server (session, DB, etc.)
+
+    // Compare tokens
+    if (csrfTokenFromRequest !== csrfTokenFromServer) {
+        return res.status(403).json({ error: 'Invalid CSRF token' });
+    }
+
+    // If valid, proceed
+    next();
+}
+
+exports.register = (req, res) => {
+    const user = req.body;
+
+    const newUser = createUser(user);
+    
+    const accessToken = generateAccessToken(newUser);
+    const refreshToken = generateRefreshToken ()
+    const csrfToken = generateCsrfToken();
+
+    res.cookie('accessToken', accessToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 15 * 60 * 1000,
+        sameSite: SAME_SITE
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/refresh',
+        sameSite: SAME_SITE
+    });
+
+    res.json({ csrfToken });
+}
+
+//----------Old one I do not use this approach -----------------------
+/**
+ * csrf token is sent when user access application  
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.csrf =(req, res)=> {
+    const csrfToken = generateCsrfToken()
+   
+       res.json({
+           csrfToken
+       });
+   }
+
+exports.oldbearerLogin = (req, res) => {
+    const { email, password, csrfToken } = req.body;
 
     // Verify the user's credentials (this is just an example)
     const user = findUserByEmail(email);
@@ -30,6 +108,8 @@ exports.bearerLogin = (req, res) => {
       refreshToken,
     });
   };
+
+
 
 exports.TESTbearerLogin = async (req, res) => {
     
