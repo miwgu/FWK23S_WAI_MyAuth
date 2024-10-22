@@ -1,11 +1,12 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
 const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
 
-   exports.csrfLogin = (req, res) =>{
+   exports.csrfLogin = async (req, res) =>{
     const { email, password} = req.body;
 
     // Verify the user's credentials (this is just an example)
-    const user = findUserByEmail(email);
+    const user = await findUserByEmail(email);
+    console.log("User-controller", user)
     if (!user || user.password !== password) {
       return res.status(401).send('Invalid credentials');
     }

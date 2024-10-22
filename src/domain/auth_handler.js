@@ -1,6 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const db = require('../db');
 
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = require('../config');
 
@@ -17,14 +18,33 @@ console.log(generateCsrfToken())
 /**
  * Users and Validation
  */
-const users =[
+
+/* const users =[
     {email:"admin@example.com", password: "1234", role:"admin"},
     {email: "user1@example.com", password: "2345", role: "user"}
-];
+]; 
 
 const findUserByEmail= (email)=>{
     return users.find(user=> user.email === email)
 }
+ */
+
+const findUserByEmail = async(email) =>{
+   try{
+    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    if (rows.length>0){
+        console.log(rows[0])
+        return rows[0];
+    } else {
+        return null;
+    }
+
+   } catch (error) {
+    console.error('Database error', error);
+     return null;
+   } 
+};
+
 
 function generateAccessToken(user) {
     return jwt.sign({email: user.email, role: user.role}, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
