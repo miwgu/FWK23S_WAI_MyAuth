@@ -79,6 +79,14 @@ exports.register = (req, res) => {
  */
 exports.csrf =(req, res)=> {
     const csrfToken = generateCsrfToken()
+
+    // Save CSRF token in a non-HTTP-only cookie
+    res.cookie('csrfToken', csrfToken, {
+        httpOnly: false, // Allows client-side JavaScript to access it
+        secure: SECURE,
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        sameSite: SAME_SITE
+    });
    
        res.json({
            csrfToken

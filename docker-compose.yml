@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  my-mysql-container:
+    image: mysql:8.0
+    container_name: my-mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    networks:
+      fwk-net:
+        ipv4_address: 172.20.0.4
+    ports:
+      - "3307:3306" # Map host port 3307 to container
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  fwk-auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fwk-auth
+    depends_on:
+      - my-mysql-container
+    networks:
+      fwk-net:
+        ipv4_address: 172.20.0.2
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: 172.20.0.4
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+      DB_NAME: mydatabase
+      DB_PORT: 3306
+
+networks:
+  fwk-net:
+    external: true
+
+volumes:
+  mysql-data:
