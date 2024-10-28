@@ -14,9 +14,13 @@ const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEm
  
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+    
     const csrfToken = generateCsrfToken();
-    //req.session.csrfToken = csrfToken;// save csrf token
+    const csrfTokenExpiry= Date.now() + 60* 60* 1000; // 1hour
+    req.session.csrfToken = csrfToken;// save csrf token
+    req.session.csrfTokenExpiry = csrfTokenExpiry;
     console.log("CSRF/token", csrfToken)
+    console.log("CSRF/Expiry", csrfTokenExpiry)
 
     res.cookie('accessToken', accessToken, {
         httpOnly: HTTP_ONLY,
@@ -34,14 +38,15 @@ const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEm
     });
 
     // Save CSRF token in a non-HTTP-only cookie
-    res.cookie('csrfToken', csrfToken, {
+    /* res.cookie('csrfToken', csrfToken, {
         httpOnly: false, // Allows client-side JavaScript to access it
         secure: SECURE,
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         sameSite: SAME_SITE
     });
+    */
     res.json({ csrfToken });
-}
+} 
 
 
 exports.register = (req, res) => {
