@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const cors = require('cors');
 require('dotenv').config(); // Load environment variables
 const {AUTH, AUTH_TYPES} = require('./config');
@@ -6,9 +7,15 @@ const app = express();
 
 app.use(cors({
     origin: 'http://localhost:5000', // Allow only this origin (our frontend)
-    methods: ['GET', 'POST'], // Allow only certain HTTP methods
+    //methods: ['GET', 'POST'], // Allow only certain HTTP methods
     //allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
     credentials: true // Enable credentials (cookies, authorization headers, etc.)
+}));
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true
 }));
 
 app.use(express.json());
