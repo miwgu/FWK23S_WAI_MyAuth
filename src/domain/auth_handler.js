@@ -2,8 +2,39 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../db');
+const qs = require('querystring');
+const axios = require('axios');
 
-const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = require('../config');
+
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, RECAPTCHA_SECRET } = require('../config');
+
+async function verifyRecaptcha (token) {
+  try {
+    //const secretKey = env.process.RECAPTCHA_SECRET ;
+    //const secretKey = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"; // Test secretKey
+    const secretKey = "6Ldd0XgqAAAAAMLOkaLZHeFE1PoKFOxcuN07_2D2" ; // My own secretKey
+    /* const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
+        params: {
+          secret: secretKey,
+          response: token
+        }  
+}); */
+        const postData = qs.stringify({ secret: secretKey, response: token });
+
+        const response = await axios.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        postData, 
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        )
+
+        const data = response.data;
+        return data.success; // true verify success
+        
+        } catch (error){
+            console.error("reCAPTCHA verificaion error:", error);
+            return false;
+        }
+};
 
 // Function to generate a secure CSRF token
 function generateCsrfToken() {
@@ -46,6 +77,12 @@ const findUserByEmail = async(email) =>{
 
 
 function generateAccessToken(user) {
+    /* const payload ={
+        id:user.id,
+        email: user.email,
+        groups:
+        role: user.role,
+    } */
     return jwt.sign({email: user.email, role: user.role}, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
 
@@ -74,4 +111,4 @@ function generateRefreshToken(user) {
 
 
 
-module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken };
+module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha };

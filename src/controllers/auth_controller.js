@@ -1,8 +1,15 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
-const{generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
+const{verifyRecaptcha, generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
 
    exports.csrfLogin = async (req, res) =>{
-    const { email, password} = req.body;
+    const { email, password, token} = req.body; // add recaptcha Token
+
+    //Validate reCaptcha token
+    const isRecaptchaValid = await verifyRecaptcha(token);
+    console.log("reCAPTCHA Validation Result:", isRecaptchaValid);
+    if (!isRecaptchaValid){
+        return res.status(400).json({message: "reCAPTCHA verification failed."})
+    }
 
     // Verify the user's credentials (this is just an example)
     const user = await findUserByEmail(email);

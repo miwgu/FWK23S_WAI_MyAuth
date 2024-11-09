@@ -7,8 +7,8 @@ const app = express();
 
 app.use(cors({
     origin: 'http://localhost:5000', // Allow only this origin (our frontend)
-    //methods: ['GET', 'POST'], // Allow only certain HTTP methods
-    //allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    methods: ['GET', 'POST'], // Allow only certain HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
     credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
