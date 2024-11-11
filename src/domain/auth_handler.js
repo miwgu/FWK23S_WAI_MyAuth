@@ -1,9 +1,9 @@
-
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../db');
 const qs = require('querystring');
 const axios = require('axios');
+const bcrypt = require('bcrypt');
 
 
 const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, RECAPTCHA_SECRET } = require('../config');
@@ -75,6 +75,9 @@ const findUserByEmail = async(email) =>{
    } 
 };
 
+const match_hashedPass = async(password, hasedPass_database) =>{
+ return await bcrypt.compare(password, hasedPass_database)
+}
 
 function generateAccessToken(user) {
     /* const payload ={
@@ -111,4 +114,4 @@ function generateRefreshToken(user) {
 
 
 
-module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha };
+module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass };

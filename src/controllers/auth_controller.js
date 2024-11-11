@@ -1,5 +1,5 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
-const{verifyRecaptcha, generateAccessToken, generateRefreshToken, generateCsrfToken, findUserByEmail}= require('../domain/auth_handler');
+const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass}= require('../domain/auth_handler');
 
    exports.csrfLogin = async (req, res) =>{
     const { email, password, token} = req.body; // add recaptcha Token
@@ -14,8 +14,21 @@ const{verifyRecaptcha, generateAccessToken, generateRefreshToken, generateCsrfTo
     // Verify the user's credentials (this is just an example)
     const user = await findUserByEmail(email);
     console.log("User-controller", user)
-    if (!user || user.password !== password) {
+    if (!user ) {
       return res.status(401).send('Invalid credentials');
+    }
+
+    const match = await match_hashedPass(password, user.password)
+    if(!match){
+      return res.status(401).send('Invalid credenials');
+    }
+
+    /**
+     * Check if user has 'admin' role
+     */
+    
+    if(user.role !== 'admin'){
+      return res.status(401).send('You are not Admin')
     }
 
  
