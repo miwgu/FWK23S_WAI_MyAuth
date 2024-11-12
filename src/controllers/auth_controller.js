@@ -8,19 +8,19 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
     const isRecaptchaValid = await verifyRecaptcha(token);
     console.log("reCAPTCHA Validation Result:", isRecaptchaValid);
     if (!isRecaptchaValid){
-        return res.status(400).json({message: "reCAPTCHA verification failed."})
+        return res.status(400).send({message: "reCAPTCHA verification failed."})
     }
 
     // Verify the user's credentials (this is just an example)
     const user = await findUserByEmail(email);
     console.log("User-controller", user)
     if (!user ) {
-      return res.status(401).send('Invalid credentials');
+      return res.status(401).send({ message: 'Invalid credentials' });
     }
 
     const match = await match_hashedPass(password, user.password)
     if(!match){
-      return res.status(401).send('Invalid credenials');
+      return res.status(401).send({ message: 'Invalid credentials' });
     }
 
     /**
@@ -28,7 +28,7 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
      */
     
     if(user.role !== 'admin'){
-      return res.status(401).send('You are not Admin')
+      return res.status(401).json({ message: 'You are not Admin' });
     }
 
  
