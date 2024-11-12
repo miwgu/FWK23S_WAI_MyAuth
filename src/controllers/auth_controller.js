@@ -1,5 +1,5 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
-const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass}= require('../domain/auth_handler');
+const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, getAllUsers}= require('../domain/auth_handler');
 
    exports.csrfLogin = async (req, res) =>{
     const { email, password, token} = req.body; // add recaptcha Token
@@ -67,6 +67,16 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
     */
     res.json({ csrfToken });
 } 
+
+exports.getallusers = async(req, res) =>{
+    try{
+     const users = await getAllUsers();
+     res.json(users);
+    }catch (error){
+     console.error(error);
+     res.status(500).send({message: 'Error fetching users'});
+    }
+}
 
 
 exports.register = (req, res) => {

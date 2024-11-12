@@ -93,6 +93,21 @@ function generateRefreshToken(user) {
     return jwt.sign({email: user.email, role: user.role}, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
+const getAllUsers = async() =>{
+    try{
+     const [rows] = await db.query('SELECT id, email, username, role, avatar, created_at, updated_at FROM users');
+     if (rows.length>0){
+         console.log(rows)
+         return rows;
+     } else {
+         return [];
+     }
+ 
+    } catch (error) {
+     console.error('Database error', error);
+      return [];
+    } 
+ };
 
 /*  const isValidUser = async (email, password) =>{
     const user =findUserByEmail(email)
@@ -114,4 +129,4 @@ function generateRefreshToken(user) {
 
 
 
-module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass };
+module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, getAllUsers };
