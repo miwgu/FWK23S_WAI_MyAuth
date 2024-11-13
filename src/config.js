@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET|| 'yEZEPxsooHnX3Fv8lNdttw==';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'LZi9HK+8zt2+OByBwN2xyg==';
 
@@ -21,7 +19,7 @@ const SAME_SITE_TYPES ={
 
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || 'localhost';
-const SECURE = process.env.NODE_ENV === 'production';
+const SECURE = process.env.NODE_ENV === 'production';//true or false
 const HTTP_ONLY = process.env.HTTP_ONLY || false;
 
 const AUTH = AUTH_TYPES[(process.env.AUTH|| 'NONE').toUpperCase()] || AUTH_TYPES.NONE;

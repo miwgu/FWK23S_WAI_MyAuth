@@ -1,9 +1,37 @@
 const express = require('express');
 const session = require('express-session');
+const helmet = require('helmet');
 const cors = require('cors');
 require('dotenv').config(); // Load environment variables
-const {AUTH, AUTH_TYPES} = require('./config');
+const {AUTH, AUTH_TYPES, SECURE} = require('./config');
 const app = express();
+
+if (SECURE) {
+    app.use(helmet()); // Enable all default security headers in the production environment
+} else {
+    app.use(
+        helmet({
+            contentSecurityPolicy: false, // Allow external scripts and resources to be loaded during development
+            crossOriginEmbedderPolicy: false,
+            crossOriginOpenerPolicy: false,
+            crossOriginResourcePolicy: false,
+            hsts: false, // HTTPS enforcement is not required in the development environment
+            dnsPrefetchControl: false, // Release DNS prefetch suppression.
+            hidePoweredBy: false, // Do not hide the Express display
+            frameguard: { action: 'deny' }, // Clickjacking measures are maintained
+            noSniff: true, // Maintain MIME-type safety improvements
+            xssFilter: true // Maintain anti-XSS headers
+        })
+    );
+}
+
+app.use(
+    helmet.hsts({
+      maxAge: 60 * 60 , // production-> 1year 60 * 60 * 24 * 365,
+      includeSubDomains: true, 
+      preload: false, //production ->true
+    })
+  );
 
 app.use(cors({
     origin: 'http://localhost:5000', // Allow only this origin (our frontend)
