@@ -5,6 +5,7 @@ const cors = require('cors');
 const { handleHealthCheck } = require('@kunalnagarco/healthie');
 
 require('dotenv').config(); // Load environment variables
+
 const {AUTH, AUTH_TYPES, SECURE, CORS_ALLOWED_ORIGINS} = require('./config');
 const app = express();
 

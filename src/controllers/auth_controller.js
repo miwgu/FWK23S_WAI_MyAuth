@@ -1,5 +1,6 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
 const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, getAllUsers}= require('../domain/auth_handler');
+const logger = require('../loggning');
 
    exports.csrfLogin = async (req, res) =>{
     const { email, password, token} = req.body; // add recaptcha Token
@@ -7,19 +8,26 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
     //Validate reCaptcha token
     const isRecaptchaValid = await verifyRecaptcha(token);
     console.log("reCAPTCHA Validation Result:", isRecaptchaValid);
+    logger.info("reCAPTCHA Validation Result:", { isRecaptchaValid });
+
     if (!isRecaptchaValid){
+        logger.warn("Failed reCAPTCHA verification", { email });
         return res.status(400).send({message: "reCAPTCHA verification failed."})
     }
 
     // Verify the user's credentials (this is just an example)
     const user = await findUserByEmail(email);
     console.log("User-controller", user)
+    logger.info("User lookup result:", { user });
+
     if (!user ) {
+        logger.warn("Invalid login attempt", { email });
       return res.status(401).send({ message: 'Invalid credentials' });
     }
 
     const match = await match_hashedPass(password, user.password)
     if(!match){
+        logger.warn("Invalid password attempt", { email });
       return res.status(401).send({ message: 'Invalid credentials' });
     }
 
@@ -28,6 +36,7 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
      */
     
     if(user.role !== 'admin'){
+        logger.warn("Unauthorized admin access attempt", { email });
       return res.status(401).json({ message: 'You are not Admin' });
     }
 
@@ -65,6 +74,7 @@ const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, gen
         sameSite: SAME_SITE
     });
     */
+    logger.info("Successful login", { email });
     res.json({ csrfToken });
 } 
 
@@ -72,8 +82,10 @@ exports.getallusers = async(req, res) =>{
     try{
      const users = await getAllUsers();
      res.json(users);
+     logger.info("Fetched all users", { userCount: users.length });
     }catch (error){
      console.error(error);
+     logger.error("Error fetching users", { error: error.message });
      res.status(500).send({message: 'Error fetching users'});
     }
 }
@@ -102,7 +114,7 @@ exports.register = (req, res) => {
         path: '/refresh',
         sameSite: SAME_SITE
     });
-
+    logger.info("New user registered", { email: user.email });
     res.json({ csrfToken });
 }
 
