@@ -3,7 +3,7 @@ const session = require('express-session');
 const helmet = require('helmet');
 const cors = require('cors');
 require('dotenv').config(); // Load environment variables
-const {AUTH, AUTH_TYPES, SECURE} = require('./config');
+const {AUTH, AUTH_TYPES, SECURE, CORS_ALLOWED_ORIGINS} = require('./config');
 const app = express();
 
 if (SECURE) {
@@ -34,7 +34,20 @@ app.use(
   );
 
 app.use(cors({
-    origin: 'http://localhost:5000', // Allow only this origin (our frontend)
+    //origin: 'http://localhost:5000', // Allow only this origin (our frontend)
+    
+    origin: (origin, callback) => {
+        const isAllowed = CORS_ALLOWED_ORIGINS.some(allowedOrigin => {
+            return typeof allowedOrigin === 'string' ? allowedOrigin === origin :
+                allowedOrigin.test(origin);
+        });
+
+        if (!origin || isAllowed) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST'], // Allow only certain HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'], // Allow specific headers
     credentials: true // Enable credentials (cookies, authorization headers, etc.)
