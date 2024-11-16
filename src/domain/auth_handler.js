@@ -12,7 +12,8 @@ async function verifyRecaptcha (token) {
   try {
     //const secretKey = env.process.RECAPTCHA_SECRET ;
     //const secretKey = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"; // Test secretKey
-    const secretKey = "6Ldd0XgqAAAAAMLOkaLZHeFE1PoKFOxcuN07_2D2" ; // My own secretKey
+    const secretKey = RECAPTCHA_SECRET ; 
+    console.log("Recaptcha_secretKey",secretKey );
     /* const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
         params: {
           secret: secretKey,

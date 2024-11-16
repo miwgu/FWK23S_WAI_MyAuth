@@ -7,7 +7,6 @@ const logger = require('../loggning');
 
     //Validate reCaptcha token
     const isRecaptchaValid = await verifyRecaptcha(token);
-    console.log("reCAPTCHA Validation Result:", isRecaptchaValid);
     logger.info("reCAPTCHA Validation Result:", { isRecaptchaValid });
 
     if (!isRecaptchaValid){
@@ -17,7 +16,6 @@ const logger = require('../loggning');
 
     // Verify the user's credentials (this is just an example)
     const user = await findUserByEmail(email);
-    console.log("User-controller", user)
     logger.info("User lookup result:", { user });
 
     if (!user ) {
@@ -48,8 +46,8 @@ const logger = require('../loggning');
     const csrfTokenExpiry= Date.now() + 60* 60* 1000; // 1hour
     req.session.csrfToken = csrfToken;// save csrf token
     req.session.csrfTokenExpiry = csrfTokenExpiry;
-    console.log("CSRF/token", csrfToken)
-    console.log("CSRF/Expiry", csrfTokenExpiry)
+    logger.info("CSRF-token", {csrfToken})
+    logger.info("CSRF-expiry",{csrfTokenExpiry})
 
     res.cookie('accessToken', accessToken, {
         httpOnly: HTTP_ONLY,
@@ -265,6 +263,7 @@ exports.logout =(req, res) =>{
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.status(200).send("Logout successful");
+    logger.info("logout", { userCount: users.length });
 }
 
 /**

@@ -1,3 +1,10 @@
+/**
+ * Do not use this
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 module.exports = (req, res, next) => {
     const clientCsrfToken = req.headers['x-csrf-token']; // CSRF token from request header
     const serverCsrfToken = req.session.csrfToken;      // CSRF token from session

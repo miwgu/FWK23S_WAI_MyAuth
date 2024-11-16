@@ -1,4 +1,4 @@
-const {PORT, AUTH, AUTH_TYPES, HTTP_ONLY, SECURE, SAME_SITE}=require('./config');
+const {PORT, AUTH, AUTH_TYPES, HTTP_ONLY, SECURE, SAME_SITE, RECAPTCHA_SECRET}=require('./config');
 const app = require('./app');
 
 app.listen(PORT, err =>{
