@@ -1,7 +1,7 @@
 # FWK23S_WAI_MyAuth
 ## How to start (React.js)
 npm install
-### Docker Container Setup for ``
+### Docker Container Setup for `fwk-auth`
 This guide helps you build and run a Docker container. Follow the steps below to get started.
 1. Install Docker desktop
 2. Before running the container, create a custom Docker network for frontend(Business, Admin) backend(Business, Admin) and auth.
