@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { handleHealthCheck } = require('@kunalnagarco/healthie');
 
+//const path = require('path');
+//require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 
 const {AUTH, AUTH_TYPES, SECURE, CORS_ALLOWED_ORIGINS} = require('./config');
