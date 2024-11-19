@@ -81,17 +81,25 @@ const match_hashedPass = async(password, hasedPass_database) =>{
 }
 
 function generateAccessToken(user) {
-    /* const payload ={
+    const payload ={
         id:user.id,
         email: user.email,
-        groups:
+        username: user.username,
         role: user.role,
-    } */
-    return jwt.sign({email: user.email, role: user.role}, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        avatar: user.avatar
+    }
+    return jwt.sign(payload, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
 
 function generateRefreshToken(user) {
-    return jwt.sign({email: user.email, role: user.role}, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+    const payload ={
+        id:user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        avatar: user.avatar
+    }
+    return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
 const getAllUsers = async() =>{

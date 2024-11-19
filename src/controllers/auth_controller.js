@@ -14,7 +14,7 @@ const logger = require('../loggning');
         return res.status(400).send({message: "reCAPTCHA verification failed."})
     }
 
-    // Verify the user's credentials (this is just an example)
+    // Verify the user's credentials
     const user = await findUserByEmail(email);
     logger.info("User lookup result:", { user });
 
