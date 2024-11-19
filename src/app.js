@@ -3,6 +3,7 @@ const session = require('express-session');
 const helmet = require('helmet');
 const cors = require('cors');
 const { handleHealthCheck } = require('@kunalnagarco/healthie');
+const cookieParser = require('cookie-parser');
 
 //const path = require('path');
 //require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
@@ -59,6 +60,8 @@ app.use(cors({
 }));
 
 app.use(handleHealthCheck());
+
+app.use(cookieParser());
 
 app.use(session({
     secret: 'your-secret-key',

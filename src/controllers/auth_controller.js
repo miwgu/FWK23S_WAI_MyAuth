@@ -1,5 +1,5 @@
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
-const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, getAllUsers}= require('../domain/auth_handler');
+const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, validateAccessToken, validateRefreshToken, getAllUsers}= require('../domain/auth_handler');
 const logger = require('../loggning');
 
    exports.csrfLogin = async (req, res) =>{
@@ -75,6 +75,28 @@ const logger = require('../loggning');
     logger.info("Successful login", { email });
     res.json({ csrfToken });
 } 
+
+exports.verifyAccessToken =(req, res, next) =>{
+   //const token = req.cookies['accessToken'];
+   const token = req.cookies?.accessToken;
+   if(!token){
+     return res.status(401).json({message: 'No token provided'});
+   }
+
+   try {
+    const decoded = validateAccessToken(token);
+    req.decoded = decoded
+    logger.info("req.decoded: ", JSON.stringify(req.decoded));
+
+    if (decoded===null){
+        return res.status(401).send("Bad request! Decoded token is null. (Check: token is expired, fail token or token not set )")
+    }  
+    next();
+   } catch (error){
+    logger.error("Error fetching users", { error: error.message });
+     return res.status(401).send("Invalid Authentication Token")
+   }
+}
 
 exports.getallusers = async(req, res) =>{
     try{

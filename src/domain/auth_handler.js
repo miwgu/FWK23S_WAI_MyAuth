@@ -157,4 +157,4 @@ const getAllUsers = async() =>{
 
 
 
-module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, getAllUsers };
+module.exports = { createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, validateAccessToken, validateRefreshToken, getAllUsers };
