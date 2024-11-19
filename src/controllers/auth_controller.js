@@ -107,6 +107,20 @@ exports.verifyAccessToken =  (req, res, next) =>{
 }
 };
 
+exports.isAdmin =(req, res, next)=>{
+    const decoded = req.user;
+    if(!decoded){
+     logger.error("No user information found in request.")
+     return res.status(401).json({message: "Unauthorized. User not authenticated."})
+    }
+
+   if(decoded.role!=="admin"){
+    logger.error("Provided role is not Admin",{user: decoded.role});
+    return res.status(403).json("You are not an Admin! Access denied.")
+   }
+   next();
+}
+
 
 exports.getallusers = async(req, res) =>{
     try{
