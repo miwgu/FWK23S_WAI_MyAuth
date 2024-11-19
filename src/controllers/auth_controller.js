@@ -1,3 +1,4 @@
+const { error } = require("winston");
 const {SECURE, HTTP_ONLY, SAME_SITE} = require("../config");
 const{createUser,findUserByEmail, generateAccessToken, generateRefreshToken, generateCsrfToken, verifyRecaptcha, match_hashedPass, validateAccessToken, validateRefreshToken, getAllUsers}= require('../domain/auth_handler');
 const logger = require('../loggning');
@@ -78,25 +79,35 @@ const logger = require('../loggning');
 
 exports.verifyAccessToken =(req, res, next) =>{
    //const token = req.cookies['accessToken'];
-   const token = req.cookies?.accessToken;
+   const token = req.cookies?.accessToken;// It does not throw an error if req.cookies is undefined.
    if(!token){
      return res.status(401).json({message: 'No token provided'});
    }
 
    try {
     const decoded = validateAccessToken(token);
-    req.decoded = decoded
-    logger.info("req.decoded: ", JSON.stringify(req.decoded));
+    console.log("Decoded payload: ", JSON.stringify(decoded))
+    logger.debug("Decoded payload: ", JSON.stringify(decoded));
+    req.user = decoded; //// Attach the decoded token payload to req.user
+    console.log("Decoded req.user: ", JSON.stringify(req.user))
+    logger.info("Token successfully decoded: ", JSON.stringify(req.user));
 
-    if (decoded===null){
-        return res.status(401).send("Bad request! Decoded token is null. (Check: token is expired, fail token or token not set )")
-    }  
     next();
    } catch (error){
-    logger.error("Error fetching users", { error: error.message });
-     return res.status(401).send("Invalid Authentication Token")
+    logger.error("Error verifying access token: ", { error: error.message });
+    res.clearCookie('accessToken');// Clear invalid or expired token
+    
+    //specific JWT errors
+    if(error.name === 'TokenExpiredError'){
+        logger.warn(`Token expired at ${error.expiredAt}`);
+        return res.status(401).json({ message: 'Token has expired' })
+   } else if(error.name === 'JsonWebTokenError'){
+        logger.error("Invalid token provided");
+        return res.status(401).json({ message: 'Invalid token' });
    }
+   return res.status(401).json({ message: 'Unauthorized' });
 }
+};
 
 exports.getallusers = async(req, res) =>{
     try{
