@@ -86,11 +86,9 @@ exports.verifyAccessToken =(req, res, next) =>{
 
    try {
     const decoded = validateAccessToken(token);
-    console.log("Decoded payload: ", JSON.stringify(decoded))
     logger.debug("Decoded payload: ", JSON.stringify(decoded));
     req.user = decoded; //// Attach the decoded token payload to req.user
-    console.log("Decoded req.user: ", JSON.stringify(req.user))
-    logger.info("Token successfully decoded: ", JSON.stringify(req.user));
+    logger.info("Token successfully decoded: ", { user: req.user });
 
     next();
    } catch (error){
