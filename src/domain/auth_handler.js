@@ -102,6 +102,25 @@ function generateRefreshToken(user) {
     return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
+/
+const validateAccessToken = (token) =>{
+  try {
+    const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET)
+    return decoded;
+  } catch(error){
+    return null;
+  }
+}
+
+const validateRefreshToken = () =>{
+    try{
+      const decoded =jwt.verify(token, REFRESH_TOKEN_SECRET)
+      return decoded;
+    } catch{
+        return null;
+    }
+}
+
 const getAllUsers = async() =>{
     try{
      const [rows] = await db.query('SELECT id, email, username, role, avatar, created_at, updated_at FROM users');
