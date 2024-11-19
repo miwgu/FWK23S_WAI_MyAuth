@@ -77,7 +77,7 @@ const logger = require('../loggning');
     res.json({ csrfToken });
 } 
 
-exports.verifyAccessToken =(req, res, next) =>{
+exports.verifyAccessToken =  (req, res, next) =>{
    //const token = req.cookies['accessToken'];
    const token = req.cookies?.accessToken;// It does not throw an error if req.cookies is undefined.
    if(!token){
@@ -86,7 +86,7 @@ exports.verifyAccessToken =(req, res, next) =>{
 
    try {
     const decoded = validateAccessToken(token);
-    logger.debug("Decoded payload: ", JSON.stringify(decoded));
+    logger.debug("Decoded payload: ", {user:decoded});
     req.user = decoded; //// Attach the decoded token payload to req.user
     logger.info("Token successfully decoded: ", { user: req.user });
 
@@ -106,6 +106,7 @@ exports.verifyAccessToken =(req, res, next) =>{
    return res.status(401).json({ message: 'Unauthorized' });
 }
 };
+
 
 exports.getallusers = async(req, res) =>{
     try{
