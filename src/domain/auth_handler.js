@@ -102,7 +102,7 @@ function generateRefreshToken(user) {
     return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
-/
+
 const validateAccessToken = (token) =>{
   try {
     const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET)
@@ -112,7 +112,7 @@ const validateAccessToken = (token) =>{
   }
 }
 
-const validateRefreshToken = () =>{
+const validateRefreshToken = (token) =>{
     try{
       const decoded =jwt.verify(token, REFRESH_TOKEN_SECRET)
       return decoded;
