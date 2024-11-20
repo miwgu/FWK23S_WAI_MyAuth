@@ -1,6 +1,14 @@
 # FWK23S_WAI_MyAuth
 ## Security settings
-CSRF token, password salting, reCAPTHA, Health check, Helmet
+CSRF token, JWT(Cookie), password salting, reCAPTHA, Health check, Helmet
+### Use HTTP-Only Cookies
+1. Enhanced Security:
+- Prevents XSS attacks since JavaScript cannot read the cookie.
+-> When combined with the Secure flag, the cookie is only sent over HTTPS.
+2. Automatic Management:
+- The browser handles sending the cookie automatically.
+3. SameSite Protection:
+- Using SameSite=Strict (or SameSite=Lax) can mitigate Cross-Site Request Forgery (CSRF) attacks by restricting when cookies are sent.
 ## .env file
 You need to add .env file under src
 ## How to start (React.js)
