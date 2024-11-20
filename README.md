@@ -1,6 +1,16 @@
 # FWK23S_WAI_MyAuth
 ## Security settings
-CSRF token, JWT(Cookie), password salting, reCAPTHA, Health check, Helmet
+CSRF toke(generate token and send it to frontend, Frontend save it in sessionStrage and send it in a custom header, X-CSRF-Token when Frontend send a request ), JWT(Cookie), password salting, reCAPTHA, Health check, Helmet
+### Flow of Using a JWT token in an HTTP only cookie
+1. The client sends login credentials to Auth server.
+2. Auth server validates credentials and generate Access token(JWT).
+3. Auth server sends JWT in an HTTP-only cookies in the respons.
+4. The cookie is automatically stored but cannot be access via JavaScript.
+5. When Frontend send request the browser automatically incluses JWT cookie in the Cookie header.
+6. Auth server validets JWT
+7. Check role in Payload, If it is admin user can access admin routes (Authentication/Authorization)
+8. Auth server sends respons to Frontend based on users permissions and request
+
 ### Use HTTP-Only Cookies
 1. Enhanced Security:
 - Prevents XSS attacks since JavaScript cannot read the cookie.
