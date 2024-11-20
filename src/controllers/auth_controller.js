@@ -115,9 +115,10 @@ exports.isAdmin =(req, res, next)=>{
     }
 
    if(decoded.role!=="admin"){
-    logger.error("Provided role is not Admin",{user: decoded.role});
+    logger.error("Access denied. You are not Admin!",{userId: req.user.id, email: req.user.email ,role: req.user.role});
     return res.status(403).json("You are not an Admin! Access denied.")
    }
+   logger.info("You can access. You are Admin.",{userId: req.user.id, email: req.user.email ,role: req.user.role})
    next();
 }
 
