@@ -1,6 +1,12 @@
 # FWK23S_WAI_MyAuth
+## Security settings
+CSRF token, password salting, reCAPTHA, Health check, Helmet
+## .env file
+You need to add .env file under src
 ## How to start (React.js)
 npm install
+npm run dev (If you do not use Docker setting, You need to adjust db.js)
+
 ### Docker Container Setup for `fwk-auth`
 This guide helps you build and run a Docker container. Follow the steps below to get started.
 1. Install Docker desktop
